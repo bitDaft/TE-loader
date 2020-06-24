@@ -36,6 +36,19 @@ int Loader::AddLoader(LoaderModel &loaderModel)
   loaders.push_back(loaderModel);
 }
 
+const std::vector<TextureModel> &Loader::getTexture()
+{
+  return textures;
+}
+const std::vector<AnimationModel> &Loader::getAnimation()
+{
+  return animations;
+}
+const std::vector<LoaderModel> &Loader::getLoader()
+{
+  return loaders;
+}
+
 void Loader::RemoveTexture(int handle)
 {
   textures.erase(std::remove_if(textures.begin(), textures.end(), [&handle](int thisHandle) { return thisHandle == handle }), textures.end());

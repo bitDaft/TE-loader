@@ -20,6 +20,10 @@ public:
   int addAnimation(AnimationModel &);
   int addLoader(LoaderModel &);
 
+  const std::vector<TextureModel>& getTexture();
+  const std::vector<AnimationModel>& getAnimation();
+  const std::vector<LoaderModel>& getLoader();
+
   void removeTexture(int);
   void removeAnimation(int);
   void removeLoader(int);

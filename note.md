@@ -10,3 +10,6 @@
   - once a file has been parsed the resource data will be stored in the vectors
   - so we can simply load a file and use these get methods to obtain the contents of the vectors
   - so lets get to making the getter functions
+
+  - the functions to get the respective resource has been added.
+  - it has been made constant so that the reference will not allow them to make changes directly but instead will have to use the API provided by the class
