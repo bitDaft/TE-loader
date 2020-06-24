@@ -17,11 +17,11 @@ OBJ		:= obj\$(COMPILE_ENV)
 OBJS		:= $(addprefix $(OBJ)/, $(notdir $(SRCS:.cpp=.o)))
 
 ifeq ($(COMPILE_ENV),debug)
-LIBRARIES		:= 
+LIBRARIES		:= -lsfml-audio-d -lsfml-graphics-d -lsfml-window-d -lsfml-main-d -lsfml-system-d 
 MODE_FLAG		:= -D_DEBUG_=1
 C_FLAGS			+= -og -g
 else
-LIBRARIES		:= 
+LIBRARIES		:= -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-main -lsfml-system
 MODE_FLAG		:= -mwindows -D_DEBUG_=0 -DNDEBUG
 C_FLAGS			+= -o3
 endif
@@ -36,6 +36,7 @@ all: dirwin $(BIN)/$(EXECUTABLE)
 else
 MKDIR_P 		:= mkdir -p
 MODE_FLAG 	+= -Ddebug\(x\)='do{if(_DEBUG_)std::cerr<<"\n"<<__FILE__<<":"<<__LINE__<<":"<<__func__<<": "<<x<<"\n";}while(false)'
+LIBRARIES	:= -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system
 EXECUTABLE	:= main
 all: dirlinux $(BIN)/$(EXECUTABLE)
 endif
