@@ -14,24 +14,25 @@ public:
   Loader(const char *);
   ~Loader();
 
-  void loadFile(const char *);
+  bool loadFromFile(const char *);
+  bool saveToFile(const char *);
 
-  int addTexture(TextureModel &);
-  int addAnimation(AnimationModel &);
-  int addLoader(LoaderModel &);
+  bool addTexture(TextureModel *);
+  bool addAnimation(AnimationModel *);
+  bool addLoader(LoaderModel *);
 
-  const std::vector<TextureModel>& getTexture();
-  const std::vector<AnimationModel>& getAnimation();
-  const std::vector<LoaderModel>& getLoader();
+  const std::vector<TextureModel *> &getTexture();
+  const std::vector<AnimationModel *> &getAnimation();
+  const std::vector<LoaderModel *> &getLoader();
 
-  void removeTexture(int);
-  void removeAnimation(int);
-  void removeLoader(int);
+  bool removeTexture(const int);
+  bool removeAnimation(const int);
+  bool removeLoader(const int);
 
 private:
-  std::vector<TextureModel> textures;
-  std::vector<AnimationModel> animations;
-  std::vector<LoaderModel> loaders;
-}
+  std::vector<TextureModel *> textures;
+  std::vector<AnimationModel *> animations;
+  std::vector<LoaderModel *> loaders;
+};
 
 #endif
