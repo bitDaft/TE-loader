@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "windows": {
+        "command": "powershell",
+        "args": ["-c", "mingw32-make"]
+      },
+      "linux": {
+        "command": "bash",
+        "args": ["-c", "make"]
+      }
+    },
+    {
+      "label": "build lib",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "windows": {
+        "command": "powershell",
+        "args": ["-c", "mingw32-make lib"]
+      },
+      "linux": {
+        "command": "bash",
+        "args": ["-c", "make lib"]
+      }
+    },
+    {
+      "label": "build & run",
+      "type": "shell",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "windows": {
+        "command": "powershell",
+        "args": ["-c", "mingw32-make run "]
+      },
+      "linux": {
+        "command": "bash",
+        "args": ["-c", "make run"]
+      }
+    },
+    {
+      "label": "clean",
+      "type": "shell",
+      "windows": {
+        "command": "powershell",
+        "args": ["-c", "mingw32-make clean"]
+      },
+      "linux": {
+        "command": "bash",
+        "args": ["-c", "make clean"]
+      }
+    }
+  ]
+}

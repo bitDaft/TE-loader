@@ -1,0 +1,2 @@
+    This folder should contain the required release version dlls and any other assets the application may need to access.
+    As this is where the release version of the application will be built to.
