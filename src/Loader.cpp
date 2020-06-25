@@ -31,21 +31,69 @@ bool Loader::loadFromFile(const char *file_path)
   {
     return false;
   }
+
+  textures.clear();
+  animations.clear();
+  loaders.clear();
+
   std::size_t count;
-  std::cout << "hello ";
+  // TEXTURES
+  std::cout << "\nLoading Textures";
   ifile.read(reinterpret_cast<char *>(&count), sizeof count);
-  std::cout << count << "\n";
+  textures.reserve(count);
   for (std::size_t i = 0; i < count; i++)
   {
-    std::size_t size;
+    std::size_t length;
     TextureModel *texture = new TextureModel();
     ifile.read(reinterpret_cast<char *>(&(texture->handle)), sizeof texture->handle);
-    ifile.read(reinterpret_cast<char *>(&size), sizeof(size));
-    texture->path.resize(size);
-    ifile.read(&(texture->path[0]), size);
+    ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+    texture->path.resize(length);
+    ifile.read(&(texture->path[0]), length);
     textures.push_back(texture);
   }
-  std::cout << textures.size();
+  std::cout << "\nDone Textures";
+
+  // ANIMATIONS
+  std::cout << "\nLoading Animations";
+  ifile.read(reinterpret_cast<char *>(&count), sizeof count);
+  animations.reserve(count);
+  for (std::size_t i = 0; i < count; i++)
+  {
+    std::size_t length;
+    AnimationModel *animation = new AnimationModel();
+    ifile.read(reinterpret_cast<char *>(&(animation->handle)), sizeof animation->handle);
+    ifile.read(reinterpret_cast<char *>(&(animation->texHandle)), sizeof animation->texHandle);
+    ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+    animation->frames.reserve(length);
+    for (size_t j = 0; j < length; j++)
+    {
+      int left, top, width, height;
+      ifile.read(reinterpret_cast<char *>(&left), sizeof left);
+      ifile.read(reinterpret_cast<char *>(&top), sizeof top);
+      ifile.read(reinterpret_cast<char *>(&width), sizeof width);
+      ifile.read(reinterpret_cast<char *>(&height), sizeof height);
+      animation->frames.push_back(new sf::IntRect(left, top, width, height));
+    }
+    animations.push_back(animation);
+  }
+  std::cout << "\nDone Animations";
+
+  // LOADERS
+  std::cout << "\nLoading Loaders";
+  ifile.read(reinterpret_cast<char *>(&count), sizeof count);
+  loaders.reserve(count);
+  for (std::size_t i = 0; i < count; i++)
+  {
+    std::size_t length;
+    LoaderModel *loader = new LoaderModel();
+    ifile.read(reinterpret_cast<char *>(&(loader->handle)), sizeof loader->handle);
+    ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+    loader->path.resize(length);
+    ifile.read(&(loader->path[0]), length);
+    loaders.push_back(loader);
+  }
+  std::cout << "\nDone Loaders";
+
   ifile.close();
   return true;
 }
@@ -94,7 +142,7 @@ bool Loader::saveToFile(const char *file_path)
     }
   }
   std::cout << "\nDone Animations";
-  
+
   // LOADERS
   std::cout << "\nWriting Loaders";
   size = loaders.size();
