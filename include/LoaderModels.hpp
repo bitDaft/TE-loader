@@ -17,9 +17,7 @@ struct AnimationModel
 {
   int handle;
   int texHandle;
-  int frameCount;
-
-  std::vector<sf::IntRect> frames;
+  std::vector<sf::IntRect *> frames;
 };
 struct LoaderModel
 {

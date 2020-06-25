@@ -39,7 +39,6 @@ bool Loader::loadFromFile(const char *file_path)
   {
     std::size_t size;
     TextureModel *texture = new TextureModel();
-    // std::cout << sizeof texture;
     ifile.read(reinterpret_cast<char *>(&(texture->handle)), sizeof texture->handle);
     ifile.read(reinterpret_cast<char *>(&size), sizeof(size));
     texture->path.resize(size);
@@ -61,17 +60,54 @@ bool Loader::saveToFile(const char *file_path)
   {
     return false;
   }
-  std::size_t size = textures.size();
-  std::cout << size;
+
+  std::size_t size;
+  // TEXTURES
+  std::cout << "\nWriting Textures";
+  size = textures.size();
   ofile.write(reinterpret_cast<char *>(&size), sizeof size);
-  std::cout << "hello";
   for (auto &texture : textures)
   {
-    std::size_t size = texture->path.length();
     ofile.write(reinterpret_cast<char *>(&(texture->handle)), sizeof texture->handle);
-    ofile.write(reinterpret_cast<char *>(&size), sizeof size);
+    std::size_t length = texture->path.length();
+    ofile.write(reinterpret_cast<char *>(&length), sizeof length);
     ofile << texture->path;
   }
+  std::cout << "\nDone Textures";
+
+  // ANIMATIONS
+  std::cout << "\nWriting Animations";
+  size = animations.size();
+  ofile.write(reinterpret_cast<char *>(&size), sizeof size);
+  for (auto &animation : animations)
+  {
+    ofile.write(reinterpret_cast<char *>(&(animation->handle)), sizeof animation->handle);
+    ofile.write(reinterpret_cast<char *>(&(animation->texHandle)), sizeof animation->texHandle);
+    std::size_t length = animation->frames.size();
+    ofile.write(reinterpret_cast<char *>(&length), sizeof length);
+    for (auto &frame : animation->frames)
+    {
+      ofile.write(reinterpret_cast<char *>(&frame->left), sizeof frame->left);
+      ofile.write(reinterpret_cast<char *>(&frame->top), sizeof frame->top);
+      ofile.write(reinterpret_cast<char *>(&frame->width), sizeof frame->width);
+      ofile.write(reinterpret_cast<char *>(&frame->height), sizeof frame->height);
+    }
+  }
+  std::cout << "\nDone Animations";
+  
+  // LOADERS
+  std::cout << "\nWriting Loaders";
+  size = loaders.size();
+  ofile.write(reinterpret_cast<char *>(&size), sizeof size);
+  for (auto &loader : loaders)
+  {
+    ofile.write(reinterpret_cast<char *>(&(loader->handle)), sizeof loader->handle);
+    std::size_t length = loader->path.length();
+    ofile.write(reinterpret_cast<char *>(&length), sizeof length);
+    ofile << loader->path;
+  }
+  std::cout << "\nDone Loaders";
+
   ofile.close();
   return true;
 }
