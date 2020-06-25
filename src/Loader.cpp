@@ -2,21 +2,46 @@
 #include <algorithm>
 #include <fstream>
 #include <cstring>
+#include <cstdio>
 #include <string>
 #include <iostream>
 
 #include "Loader.hpp"
 
+int constant = 0x10AD;
+
 Loader::Loader()
+    : flags(0)
 {
 }
 
 Loader::Loader(const char *file_path)
+    : flags(0)
 {
   loadFromFile(file_path);
 }
 Loader::~Loader()
 {
+  flags = 0;
+  clearData();
+}
+
+void Loader::clearData()
+{
+  for (auto &i : textures)
+  {
+    delete i;
+  }
+  for (auto &i : animations)
+  {
+    for (auto &j : i->frames)
+      delete j;
+    delete i;
+  }
+  for (auto &i : loaders)
+  {
+    delete i;
+  }
   textures.clear();
   animations.clear();
   loaders.clear();
@@ -24,18 +49,23 @@ Loader::~Loader()
 
 bool Loader::loadFromFile(const char *file_path)
 {
-  // TODO : parse file to objects
   std::ifstream ifile;
   ifile.open(file_path, std::ifstream::in | std::ifstream::binary);
   if (!ifile.is_open())
   {
+    flags = -1;
     return false;
   }
 
-  textures.clear();
-  animations.clear();
-  loaders.clear();
+  int file_constant = 0;
+  ifile.read(reinterpret_cast<char *>(&file_constant), sizeof file_constant);
+  if (file_constant != constant)
+  {
+    flags = -2;
+    return false;
+  }
 
+  clearData();
   std::size_t count;
   // TEXTURES
   std::cout << "\nLoading Textures";
@@ -101,13 +131,16 @@ bool Loader::saveToFile(const char *file_path)
 {
   std::ofstream ofile;
   std::string actual_file_path = file_path;
+  actual_file_path += ".teldr";
   std::string temp_file_path = file_path;
   temp_file_path += ".tmp";
   ofile.open(temp_file_path, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
   if (!ofile.is_open())
   {
+    flags = -1;
     return false;
   }
+  ofile.write(reinterpret_cast<char *>(&constant), sizeof constant);
 
   std::size_t size;
   // TEXTURES
@@ -157,6 +190,14 @@ bool Loader::saveToFile(const char *file_path)
   std::cout << "\nDone Loaders";
 
   ofile.close();
+
+  // copy from temp to actual file
+  std::ifstream src(temp_file_path, std::ios::binary);
+  std::ofstream dst(actual_file_path, std::ios::binary);
+  dst << src.rdbuf();
+  src.close();
+  dst.close();
+  std::remove(temp_file_path.c_str());
   return true;
 }
 

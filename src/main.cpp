@@ -5,37 +5,44 @@
 
 int main(int argc, char const *argv[])
 {
-  Loader *ldr = new Loader("test.tmp");
+  Loader *ldr = new Loader("test.teldr");
   std::cout << "\nprinting files";
   std::cout << "\nTextures:\n";
-  for (auto &i : ldr->getTexture())
+  if (ldr->flags < 0)
   {
-    std::cout << i->handle << " ";
-    std::cout << i->path;
-    std::cout << "\n";
+    std::cout << "An error occured while reading file";
   }
-  std::cout << "\nAnimations:\n";
-  for (auto &i : ldr->getAnimation())
+  else
   {
-    std::cout << i->handle << " ";
-    std::cout << i->texHandle;
-    std::cout << "\n";
-    for (auto &j : i->frames)
+    for (auto &i : ldr->getTexture())
     {
-      std::cout << j->top << " ";
-      std::cout << j->left << " ";
-      std::cout << j->width << " ";
-      std::cout << j->height << " ";
+      std::cout << i->handle << " ";
+      std::cout << i->path;
       std::cout << "\n";
     }
-    std::cout << "\n";
-  }
-  std::cout << "\nLoaders:\n";
-  for (auto &i : ldr->getLoader())
-  {
-    std::cout << i->handle << " ";
-    std::cout << i->path;
-    std::cout << "\n";
+    std::cout << "\nAnimations:\n";
+    for (auto &i : ldr->getAnimation())
+    {
+      std::cout << i->handle << " ";
+      std::cout << i->texHandle;
+      std::cout << "\n";
+      for (auto &j : i->frames)
+      {
+        std::cout << j->top << " ";
+        std::cout << j->left << " ";
+        std::cout << j->width << " ";
+        std::cout << j->height << " ";
+        std::cout << "\n";
+      }
+      std::cout << "\n";
+    }
+    std::cout << "\nLoaders:\n";
+    for (auto &i : ldr->getLoader())
+    {
+      std::cout << i->handle << " ";
+      std::cout << i->path;
+      std::cout << "\n";
+    }
   }
   // Loader *ldr = new Loader();
   // AnimationModel *anim = new AnimationModel();
@@ -59,16 +66,6 @@ int main(int argc, char const *argv[])
   // tex->handle = 2;
   // ldr->addTexture(tex);
   // ldr->saveToFile("test");
-  // std::cout << "\n";
-  // for (auto &i : ldr->getTexture())
-  // {
-  //   std::cout << i->handle << " ";
-  //   std::cout << i->path;
-  //   std::cout << "\n";
-  // }
-  // delete tex;
-
-  // std::cout << ldr->getTexture().size();
 
   return 0;
 }

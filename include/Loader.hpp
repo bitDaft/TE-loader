@@ -29,7 +29,10 @@ public:
   bool removeAnimation(const int);
   bool removeLoader(const int);
 
+  int flags;
+
 private:
+  void clearData();
   std::vector<TextureModel *> textures;
   std::vector<AnimationModel *> animations;
   std::vector<LoaderModel *> loaders;

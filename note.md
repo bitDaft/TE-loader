@@ -32,3 +32,7 @@
   - now that i think about it, there is no mechanism to actually create or save the file.
   - so now we need to create a functions to save the data into a file.
   - apparantly writing of vector is crap. so we have to do writing one by one
+
+  - the loading and saving of the data is completed.
+  - the resources available currently are textures animations and other loader files.
+  - this can now be used temporarily and expanding to other resources is going to be easy now
