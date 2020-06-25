@@ -4,6 +4,7 @@
 !/bin/*/README
 /obj/*/*
 !/obj/*/README
+/include/SFML
 *.o
 *.gch
 GPATH
