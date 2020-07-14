@@ -218,6 +218,23 @@ bool Loader::addTexture(TextureModel *textureModel)
   }
   return !exist;
 }
+bool Loader::addTileset(TilesetModel *tilesetModel)
+{
+  bool exist = false;
+  for (auto &tileset : tilesets)
+  {
+    if (tileset->handle == tilesetModel->handle)
+    {
+      exist = true;
+      break;
+    }
+  }
+  if (!exist)
+  {
+    tilesets.push_back(tilesetModel);
+  }
+  return !exist;
+}
 bool Loader::addAnimation(AnimationModel *animationModel)
 {
   bool exist = false;
@@ -257,6 +274,10 @@ const std::vector<TextureModel *> &Loader::getTexture()
 {
   return textures;
 }
+const std::vector<TilesetModel *> &Loader::getTileset()
+{
+  return tilesets;
+}
 const std::vector<AnimationModel *> &Loader::getAnimation()
 {
   return animations;
@@ -270,6 +291,12 @@ bool Loader::removeTexture(const int handle)
 {
   const std::size_t len = textures.size();
   textures.erase(std::remove_if(textures.begin(), textures.end(), [&handle](TextureModel *texture) { return texture->handle == handle; }), textures.end());
+  return textures.size() < len;
+}
+bool Loader::removeTileset(const int handle)
+{
+  const std::size_t len = tilesets.size();
+  tilesets.erase(std::remove_if(tilesets.begin(), tilesets.end(), [&handle](TilesetModel *tileset) { return tileset->handle == handle; }), tilesets.end());
   return textures.size() < len;
 }
 bool Loader::removeAnimation(const int handle)
