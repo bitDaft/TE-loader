@@ -28,7 +28,7 @@ struct TilesetModel
 {
   int handle;
   int texHandle;
-  int type;
+  bool regionBased;
   sf::IntRect region;
   sf::Vector2i tileSize;
   std::vector<sf::IntRect *> tiles;

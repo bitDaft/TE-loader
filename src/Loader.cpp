@@ -83,6 +83,47 @@ bool Loader::loadFromFile(const char *file_path)
   }
   std::cout << "\nDone Textures";
 
+  // TILESETS
+  std::cout << "\nLoading Tilesets";
+  ifile.read(reinterpret_cast<char *>(&count), sizeof count);
+  tilesets.reserve(count);
+  for (std::size_t i = 0; i < count; i++)
+  {
+    TilesetModel *tileset = new TilesetModel();
+    ifile.read(reinterpret_cast<char *>(&(tileset->handle)), sizeof tileset->handle);
+    ifile.read(reinterpret_cast<char *>(&(tileset->texHandle)), sizeof tileset->texHandle);
+    ifile.read(reinterpret_cast<char *>(&(tileset->regionBased)), sizeof tileset->regionBased);
+    if (tileset->regionBased)
+    {
+      int left, top, width, height;
+      int tilex, tiley;
+      ifile.read(reinterpret_cast<char *>(&left), sizeof left);
+      ifile.read(reinterpret_cast<char *>(&top), sizeof top);
+      ifile.read(reinterpret_cast<char *>(&width), sizeof width);
+      ifile.read(reinterpret_cast<char *>(&height), sizeof height);
+      tileset->region = sf::IntRect(left, top, width, height);
+      ifile.read(reinterpret_cast<char *>(&tilex), sizeof tilex);
+      ifile.read(reinterpret_cast<char *>(&tiley), sizeof tiley);
+      tileset->tileSize = sf::Vector2i(tilex, tiley);
+    }
+    else
+    {
+      std::size_t length;
+      ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+      tileset->tiles.reserve(length);
+      for (size_t j = 0; j < length; j++)
+      {
+        int left, top, width, height;
+        ifile.read(reinterpret_cast<char *>(&left), sizeof left);
+        ifile.read(reinterpret_cast<char *>(&top), sizeof top);
+        ifile.read(reinterpret_cast<char *>(&width), sizeof width);
+        ifile.read(reinterpret_cast<char *>(&height), sizeof height);
+        tileset->tiles.push_back(new sf::IntRect(left, top, width, height));
+      }
+    }
+  }
+  std::cout << "\nDone Tilesets";
+
   // ANIMATIONS
   std::cout << "\nLoading Animations";
   ifile.read(reinterpret_cast<char *>(&count), sizeof count);
@@ -155,6 +196,39 @@ bool Loader::saveToFile(const char *file_path)
     ofile << texture->path;
   }
   std::cout << "\nDone Textures";
+
+  // TILESETS
+  std::cout << "\nWriting Tilesets";
+  size = tilesets.size();
+  ofile.write(reinterpret_cast<char *>(&size), sizeof size);
+  for (auto &tileset : tilesets)
+  {
+    ofile.write(reinterpret_cast<char *>(&(tileset->handle)), sizeof tileset->handle);
+    ofile.write(reinterpret_cast<char *>(&(tileset->texHandle)), sizeof tileset->texHandle);
+    ofile.write(reinterpret_cast<char *>(&(tileset->regionBased)), sizeof tileset->regionBased);
+    if (tileset->regionBased)
+    {
+      ofile.write(reinterpret_cast<char *>(&tileset->region.left), sizeof tileset->region.left);
+      ofile.write(reinterpret_cast<char *>(&tileset->region.top), sizeof tileset->region.top);
+      ofile.write(reinterpret_cast<char *>(&tileset->region.width), sizeof tileset->region.width);
+      ofile.write(reinterpret_cast<char *>(&tileset->region.height), sizeof tileset->region.height);
+      ofile.write(reinterpret_cast<char *>(&tileset->tileSize.x), sizeof tileset->tileSize.x);
+      ofile.write(reinterpret_cast<char *>(&tileset->tileSize.y), sizeof tileset->tileSize.y);
+    }
+    else
+    {
+      std::size_t length = tileset->tiles.size();
+      ofile.write(reinterpret_cast<char *>(&length), sizeof length);
+      for (auto &tile : tileset->tiles)
+      {
+        ofile.write(reinterpret_cast<char *>(&tile->left), sizeof tile->left);
+        ofile.write(reinterpret_cast<char *>(&tile->top), sizeof tile->top);
+        ofile.write(reinterpret_cast<char *>(&tile->width), sizeof tile->width);
+        ofile.write(reinterpret_cast<char *>(&tile->height), sizeof tile->height);
+      }
+    }
+  }
+  std::cout << "\nDone Tilesets";
 
   // ANIMATIONS
   std::cout << "\nWriting Animations";
