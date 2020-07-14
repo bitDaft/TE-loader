@@ -348,13 +348,10 @@ const std::vector<TextureModel *> &Loader::getTexture()
 {
   return textures;
 }
-const std::vector<TilesetModel *> &Loader::getTileset()
 {
   return tilesets;
 }
 const std::vector<AnimationModel *> &Loader::getAnimation()
-{
-  return animations;
 }
 const std::vector<LoaderModel *> &Loader::getLoader()
 {
