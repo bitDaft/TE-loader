@@ -6,6 +6,7 @@
 !/obj/*/README
 /include/SFML
 *.o
+*.out
 *.gch
 GPATH
 GRTAGS

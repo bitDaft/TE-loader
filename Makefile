@@ -8,12 +8,12 @@ LIBEXEC			:= libteldr.a
 
 # debug or release
 COMPILE_ENV	:= debug
-BIN		:= bin\$(COMPILE_ENV)
+BIN		:= bin/$(COMPILE_ENV)
 INCLUDE		:= include
-LIB		:= lib\$(COMPILE_ENV)
+LIB		:= lib/$(COMPILE_ENV)
 SRC		:= src
 SRCS		:= $(wildcard $(SRC)/*.cpp)
-OBJ		:= obj\$(COMPILE_ENV)
+OBJ		:= obj/$(COMPILE_ENV)
 OBJS		:= $(addprefix $(OBJ)/, $(notdir $(SRCS:.cpp=.o)))
 
 ifeq ($(COMPILE_ENV),debug)
@@ -22,7 +22,7 @@ MODE_FLAG		:= -D_DEBUG_=1
 C_FLAGS			+= -og -g
 else
 LIBRARIES		:= -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-main -lsfml-system
-MODE_FLAG		:= -mwindows -D_DEBUG_=0 -DNDEBUG
+MODE_FLAG		:= -D_DEBUG_=0 -DNDEBUG
 C_FLAGS			+= -o3
 endif
 
@@ -64,7 +64,7 @@ run: all
 	cd $(BIN) && $(EXECUTABLE)
 
 lib: $(OBJS)
-	ar crf $(BIN)\$(LIBEXEC) $^
+	ar crf $(BIN)/$(LIBEXEC) $^
 
 $(BIN)/$(EXECUTABLE):	$(OBJS)
 	$(CC) $^ -o $@ -L$(LIB) $(LIBRARIES)
