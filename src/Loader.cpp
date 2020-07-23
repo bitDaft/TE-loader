@@ -53,6 +53,7 @@ bool Loader::loadFromFile(const char *file_path)
   ifile.open(file_path, std::ifstream::in | std::ifstream::binary);
   if (!ifile.is_open())
   {
+    ifile.close();
     flags = -1;
     return false;
   }
@@ -130,20 +131,35 @@ bool Loader::loadFromFile(const char *file_path)
   animations.reserve(count);
   for (std::size_t i = 0; i < count; i++)
   {
-    std::size_t length;
     AnimationModel *animation = new AnimationModel();
     ifile.read(reinterpret_cast<char *>(&(animation->handle)), sizeof animation->handle);
     ifile.read(reinterpret_cast<char *>(&(animation->texHandle)), sizeof animation->texHandle);
-    ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
-    animation->frames.reserve(length);
-    for (size_t j = 0; j < length; j++)
+    ifile.read(reinterpret_cast<char *>(&(animation->tileBased)), sizeof animation->tileBased);
+    if (animation->tileBased)
     {
-      int left, top, width, height;
-      ifile.read(reinterpret_cast<char *>(&left), sizeof left);
-      ifile.read(reinterpret_cast<char *>(&top), sizeof top);
-      ifile.read(reinterpret_cast<char *>(&width), sizeof width);
-      ifile.read(reinterpret_cast<char *>(&height), sizeof height);
-      animation->frames.push_back(new sf::IntRect(left, top, width, height));
+      std::size_t length;
+      ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+      for (std::size_t j = 0; j < length; j++)
+      {
+        int tileid;
+        ifile.read(reinterpret_cast<char *>(&tileid), sizeof(tileid));
+        animation->tileids.push_back(tileid);
+      }
+    }
+    else
+    {
+      std::size_t length;
+      ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
+      animation->frames.reserve(length);
+      for (std::size_t j = 0; j < length; j++)
+      {
+        int left, top, width, height;
+        ifile.read(reinterpret_cast<char *>(&left), sizeof left);
+        ifile.read(reinterpret_cast<char *>(&top), sizeof top);
+        ifile.read(reinterpret_cast<char *>(&width), sizeof width);
+        ifile.read(reinterpret_cast<char *>(&height), sizeof height);
+        animation->frames.push_back(new sf::IntRect(left, top, width, height));
+      }
     }
     animations.push_back(animation);
   }
@@ -178,6 +194,8 @@ bool Loader::saveToFile(const char *file_path)
   ofile.open(temp_file_path, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
   if (!ofile.is_open())
   {
+    std::remove(temp_file_path.c_str());
+    ofile.close();
     flags = -1;
     return false;
   }
@@ -238,14 +256,27 @@ bool Loader::saveToFile(const char *file_path)
   {
     ofile.write(reinterpret_cast<char *>(&(animation->handle)), sizeof animation->handle);
     ofile.write(reinterpret_cast<char *>(&(animation->texHandle)), sizeof animation->texHandle);
-    std::size_t length = animation->frames.size();
-    ofile.write(reinterpret_cast<char *>(&length), sizeof length);
-    for (auto &frame : animation->frames)
+    ofile.write(reinterpret_cast<char *>(&(animation->tileBased)), sizeof animation->tileBased);
+    if (animation->tileBased)
     {
-      ofile.write(reinterpret_cast<char *>(&frame->left), sizeof frame->left);
-      ofile.write(reinterpret_cast<char *>(&frame->top), sizeof frame->top);
-      ofile.write(reinterpret_cast<char *>(&frame->width), sizeof frame->width);
-      ofile.write(reinterpret_cast<char *>(&frame->height), sizeof frame->height);
+      std::size_t length = animation->tileids.size();
+      ofile.write(reinterpret_cast<char *>(&length), sizeof length);
+      for (auto &tileid : animation->tileids)
+      {
+        ofile.write(reinterpret_cast<char *>(&tileid), sizeof tileid);
+      }
+    }
+    else
+    {
+      std::size_t length = animation->frames.size();
+      ofile.write(reinterpret_cast<char *>(&length), sizeof length);
+      for (auto &frame : animation->frames)
+      {
+        ofile.write(reinterpret_cast<char *>(&frame->left), sizeof frame->left);
+        ofile.write(reinterpret_cast<char *>(&frame->top), sizeof frame->top);
+        ofile.write(reinterpret_cast<char *>(&frame->width), sizeof frame->width);
+        ofile.write(reinterpret_cast<char *>(&frame->height), sizeof frame->height);
+      }
     }
   }
   std::cout << "\nDone Animations";
@@ -348,10 +379,13 @@ const std::vector<TextureModel *> &Loader::getTexture()
 {
   return textures;
 }
+const std::vector<TilesetModel *> &Loader::getTileset()
 {
   return tilesets;
 }
 const std::vector<AnimationModel *> &Loader::getAnimation()
+{
+  return animations;
 }
 const std::vector<LoaderModel *> &Loader::getLoader()
 {
