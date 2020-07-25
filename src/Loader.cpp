@@ -122,6 +122,7 @@ bool Loader::loadFromFile(const char *file_path)
         tileset->tiles.push_back(new sf::IntRect(left, top, width, height));
       }
     }
+    tilesets.push_back(tileset);
   }
   std::cout << "\nDone Tilesets";
 
