@@ -55,10 +55,10 @@ dirwin:
 	${MKDIR_P} obj\release 
 
 clean:
-	$(RM) .\$(BIN)\$(EXECUTABLE)
-	$(RM) .\$(BIN)\$(LIBEXEC)
-	$(RM) .\$(OBJ)\*.o
-	$(RM) .\$(INCLUDE)\*.gch
+	$(RM) ./$(BIN)/$(EXECUTABLE)
+	$(RM) ./$(BIN)/$(LIBEXEC)
+	$(RM) ./$(OBJ)/*.o
+	$(RM) ./$(INCLUDE)/*.gch
 
 run: all
 	cd $(BIN) && $(EXECUTABLE)
