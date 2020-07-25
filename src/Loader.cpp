@@ -137,6 +137,7 @@ bool Loader::loadFromFile(const char *file_path)
     ifile.read(reinterpret_cast<char *>(&(animation->tileBased)), sizeof animation->tileBased);
     if (animation->tileBased)
     {
+      ifile.read(reinterpret_cast<char *>(&(animation->tilesetHandle)), sizeof animation->tilesetHandle);
       std::size_t length;
       ifile.read(reinterpret_cast<char *>(&length), sizeof(length));
       for (std::size_t j = 0; j < length; j++)
@@ -259,6 +260,8 @@ bool Loader::saveToFile(const char *file_path)
     ofile.write(reinterpret_cast<char *>(&(animation->tileBased)), sizeof animation->tileBased);
     if (animation->tileBased)
     {
+
+      ofile.write(reinterpret_cast<char *>(&(animation->tilesetHandle)), sizeof animation->tilesetHandle);
       std::size_t length = animation->tileids.size();
       ofile.write(reinterpret_cast<char *>(&length), sizeof length);
       for (auto &tileid : animation->tileids)
